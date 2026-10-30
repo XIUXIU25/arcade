@@ -1,5 +1,9 @@
 <svelte:head><title>Xiuxiu Ying | About</title></svelte:head>
 
+<script>
+	import { asset } from '$app/paths';
+</script>
+
 <main id="main-content" class="page">
 	<section class="about-hero">
 		<div>
@@ -8,7 +12,7 @@
 			<p>Hi everyone, I am Xiu Xiu. I am currently a graduate student in computer science at Northeastern University.</p>
 		</div>
 		<figure class="about-photo">
-			<img src="/assets/image.png" alt="Xiuxiu Ying sitting at a table and looking at the camera" />
+			<img src={asset('assets/image.png')} alt="Xiuxiu Ying sitting at a table and looking at the camera" />
 		</figure>
 	</section>
 

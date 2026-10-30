@@ -1,5 +1,9 @@
 <svelte:head><title>Xiuxiu Ying | Contact</title></svelte:head>
 
+<script>
+	import { resolve } from '$app/paths';
+</script>
+
 <main id="main-content" class="page">
 	<section class="content">
 		<p class="lead">Contact</p>
@@ -20,7 +24,7 @@
 		<h2>What I'm open to</h2>
 		<p>I'm open to class feedback, project discussions, and internship conversations.</p>
 		<p>Email is the best way to contact me. You can also check the crossword page for my project work.</p>
-		<p><a class="button-link" href="/crossword">Open the crossword</a></p>
+		<p><a class="button-link" href={resolve('/crossword')}>Open the crossword</a></p>
 	</section>
 </main>
 

@@ -2,7 +2,7 @@
 	let { index, number, value, isBlock, label, onLetter } = $props();
 </script>
 
-<div class="cell" class:block={isBlock} data-number={number || undefined}>
+<div class="cell" class:block={isBlock} data-number={number || undefined} aria-hidden={isBlock}>
 	{#if !isBlock}
 		<input
 			type="text"

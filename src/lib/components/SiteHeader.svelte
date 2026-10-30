@@ -1,20 +1,21 @@
 <script>
+	import { resolve } from '$app/paths';
 	let { currentPath = '/' } = $props();
 	const links = [
-		{ href: '/', label: 'Home' },
-		{ href: '/2048', label: '2048' },
-		{ href: '/crossword', label: 'Crossword' },
-		{ href: '/about', label: 'About' },
-		{ href: '/contact', label: 'Contact' }
+		{ path: '/', label: 'Home' },
+		{ path: '/2048', label: '2048' },
+		{ path: '/crossword', label: 'Crossword' },
+		{ path: '/about', label: 'About' },
+		{ path: '/contact', label: 'Contact' }
 	];
 </script>
 
 <header class="site-header">
 	<nav class="site-nav" aria-label="Primary">
-		<a class="site-brand" href="/">Xiuxiu Ying</a>
+		<a class="site-brand" href={resolve('/')}>Xiuxiu Ying</a>
 		<ul class="site-links">
-			{#each links as link (link.href)}
-				<li><a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a></li>
+			{#each links as link (link.path)}
+				<li><a href={resolve(link.path)} aria-current={currentPath === resolve(link.path) ? 'page' : undefined}>{link.label}</a></li>
 			{/each}
 		</ul>
 	</nav>

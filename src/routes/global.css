@@ -1,0 +1,41 @@
+:root {
+	--bg: #ecf6e9;
+	--surface: #eff3ec;
+	--surface-alt: #eff3ec;
+	--text: #1f1f1f;
+	--muted: #56524c;
+	--border: #169a3b;
+	--accent: #0a5624;
+	--accent-strong: #af570a;
+	--accent-soft: #034e3b;
+	--shadow: 0 10px 30px rgb(31 31 31 / 8%);
+	--radius: 1rem;
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+	--space-7: 3rem;
+	--max-width: 68rem;
+	--body-width: 65ch;
+	font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: inherit; line-height: 1.6; }
+a { color: var(--accent-strong); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+a:hover { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible, label:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+img { display: block; max-width: 100%; }
+.skip-link { position: absolute; left: -9999px; top: 0.5rem; z-index: 100; padding: var(--space-2) var(--space-3); border-radius: 999px; background: var(--accent); color: #fff; }
+.skip-link:focus { left: 0.5rem; }
+.page { max-width: var(--max-width); margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-7); }
+.page > * + * { margin-top: var(--space-5); }
+.content { max-width: var(--body-width); }
+.lead { font-size: 1.1rem; color: var(--muted); }
+.button-link { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 0.75rem 1.15rem; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; transition: transform 160ms ease, background-color 160ms ease; }
+.button-link:hover { transform: translateY(-1px); background: var(--accent-strong); color: #fff; }
+.panel { padding: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+@media (max-width: 42rem) { .panel { padding: var(--space-5); } }

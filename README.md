@@ -1,56 +1,29 @@
-# sv
+# Arcade
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A SvelteKit app that brings my Project 1 crossword into a small arcade and adds 2048.
 
-## Creating a project
+## Requirements
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Node.js 24 (see `.nvmrc`)
+- npm
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+## Run locally
 
 ```sh
-# recreate this project
-npx sv@1.1.1 create --template minimal --types jsdoc --install npm .
-```
-
-## Adding features
-
-Add features to your project with `sv add`:
-
-```sh
-npx sv add
-```
-
-For example, to add Tailwind CSS:
-
-```sh
-npx sv add tailwindcss
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+npm ci
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Open the local URL printed by Vite. The home, about, contact, and crossword pages are migrated from Project 1. The `/2048` route is a placeholder while the game and its separately published `arcade-core` package are being built.
 
-To create a production version of your app:
+## Routes
 
-```sh
-npm run build
-```
+- `/` — arcade home
+- `/about` — about
+- `/contact` — contact links
+- `/crossword` — mini crossword
+- `/2048` — game page (in progress)
 
-You can preview the production build with `npm run preview`.
+## Deployment
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The app is intended for GitHub Pages. The static adapter and Pages workflow will be configured as part of deployment setup.

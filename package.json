@@ -28,6 +28,6 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"@xiuxiuying/arcade-core": "file:../arcade-core"
+		"@xiuxiuy/arcade-core": "^0.1.1"
 	}
 }

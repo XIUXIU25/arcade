@@ -1,4 +1,4 @@
-import { canMove, hasMoves, move, spawn } from '@xiuxiuying/arcade-core';
+import { canMove, hasMoves, move, spawn } from '@xiuxiuy/arcade-core';
 
 const STORAGE_KEY = 'xiuxiu-arcade-2048';
 const freshBoard = () => Array.from({ length: 4 }, () => Array(4).fill(0));

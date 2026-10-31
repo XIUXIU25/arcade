@@ -14,7 +14,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. The home, about, contact, and crossword pages are migrated from Project 1. The `/2048` route uses the separately maintained `@xiuxiuying/arcade-core` package.
+Open the local URL printed by Vite. The home, about, contact, and crossword pages are migrated from Project 1. The `/2048` route uses the separately maintained `@xiuxiuy/arcade-core` package.
 
 ## Routes
 
@@ -26,4 +26,4 @@ Open the local URL printed by Vite. The home, about, contact, and crossword page
 
 ## Deployment
 
-The app is intended for GitHub Pages. The static adapter and Pages workflow will be configured as part of deployment setup. The package is a local file dependency during development; it will be switched to the public npm registry after publication.
+The app is built with `@sveltejs/adapter-static` and deployed to GitHub Pages by the workflow in `.github/workflows/`, which runs on every push to `main`. The game logic is installed from the public npm registry as `@xiuxiuy/arcade-core`.

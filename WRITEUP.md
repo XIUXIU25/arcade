@@ -1,10 +1,10 @@
-# Project 2 writeup (draft)
+# Project 2 writeup
 
 Review the bracketed prompts and replace them with your own details before handing this in.
 
 ## What went into the package and what stayed in the app
 
-The `@xiuxiuying/arcade-core` package contains the 2048 board rules: moving and merging tiles, spawning a tile, and checking whether a move is legal or the game has ended. The app handles rendering, keyboard and mobile controls, score display, high score, save data, and win or game-over messages. I kept score tracking in the app because the updated assignment replaced the package's `score` function with `canMove`.
+The `@xiuxiuy/arcade-core` package contains the 2048 board rules: moving and merging tiles, spawning a tile, and checking whether a move is legal or the game has ended. The app handles rendering, keyboard and mobile controls, score display, high score, save data, and win or game-over messages. I kept score tracking in the app because the updated assignment replaced the package's `score` function with `canMove`.
 
 ## Migrating Project 1 to Svelte
 
@@ -24,7 +24,7 @@ I would add swipe controls for mobile and a seed field so a game can be replayed
 
 ## Time spent
 
-I spent about **[enter your actual total hours]** hours on Project 2.
+I spent about 8 hours
 
 ## Assumptions
 

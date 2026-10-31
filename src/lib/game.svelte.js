@@ -1,63 +1,87 @@
 import { canMove, hasMoves, move, spawn } from '@xiuxiuy/arcade-core';
 
 const STORAGE_KEY = 'xiuxiu-arcade-2048';
-const freshBoard = () => Array.from({ length: 4 }, () => Array(4).fill(0));
+
+function emptyBoard() {
+	return [
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[0, 0, 0, 0]
+	];
+}
 
 export const game = $state({
-	board: freshBoard(),
+	board: emptyBoard(),
 	score: 0,
 	highScore: 0,
-	started: false,
 	won: false,
 	winReached: false,
 	over: false,
 	announcement: ''
 });
 
+// Adds up the new tiles made by merging one row or column.
 function pointsForLine(line) {
-	const tiles = line.filter((tile) => tile !== 0);
+	const tiles = [];
+	for (const tile of line) {
+		if (tile !== 0) {
+			tiles.push(tile);
+		}
+	}
+
 	let points = 0;
-	for (let index = 0; index < tiles.length - 1; index += 1) {
-		if (tiles[index] === tiles[index + 1]) {
-			points += tiles[index] * 2;
-			index += 1;
+	let i = 0;
+	while (i < tiles.length - 1) {
+		if (tiles[i] === tiles[i + 1]) {
+			points += tiles[i] * 2;
+			i += 2;
+		} else {
+			i += 1;
 		}
 	}
 	return points;
 }
 
 function pointsForMove(board, direction) {
-	if (direction === 'left' || direction === 'right') {
-		return board.reduce((total, row) => total + pointsForLine(row), 0);
+	let points = 0;
+	for (let i = 0; i < 4; i++) {
+		if (direction === 'left' || direction === 'right') {
+			points += pointsForLine(board[i]);
+		} else {
+			const column = [board[0][i], board[1][i], board[2][i], board[3][i]];
+			points += pointsForLine(column);
+		}
 	}
-	return Array.from({ length: 4 }, (_, column) => pointsForLine(board.map((row) => row[column])))
-		.reduce((total, points) => total + points, 0);
+	return points;
+}
+
+function hasTile2048(board) {
+	for (const row of board) {
+		for (const tile of row) {
+			if (tile >= 2048) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 function saveGame() {
-	if (typeof localStorage === 'undefined') return;
-	try {
-		localStorage.setItem(
-			STORAGE_KEY,
-			JSON.stringify({
-				board: game.board,
-				score: game.score,
-				highScore: game.highScore,
-				started: game.started,
-				won: game.won,
-				winReached: game.winReached,
-				over: game.over
-			})
-		);
-	} catch {
-		// The game remains usable if storage is unavailable or full.
-	}
+	const data = {
+		board: game.board,
+		score: game.score,
+		highScore: game.highScore,
+		won: game.won,
+		winReached: game.winReached,
+		over: game.over
+	};
+	localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 export function newGame() {
-	game.board = spawn(spawn(freshBoard()));
+	game.board = spawn(spawn(emptyBoard()));
 	game.score = 0;
-	game.started = true;
 	game.won = false;
 	game.winReached = false;
 	game.over = false;
@@ -66,57 +90,60 @@ export function newGame() {
 }
 
 export function restoreGame() {
-	if (typeof localStorage !== 'undefined') {
-		try {
-			const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-			const validBoard =
-				Array.isArray(saved?.board) &&
-				saved.board.length === 4 &&
-				saved.board.every(
-					(row) =>
-						Array.isArray(row) &&
-						row.length === 4 &&
-						row.every((tile) => Number.isSafeInteger(tile) && tile >= 0)
-				);
-			if (validBoard) {
-				game.board = saved.board;
-				game.score = Number.isSafeInteger(saved.score) && saved.score >= 0 ? saved.score : 0;
-				game.highScore = Number.isSafeInteger(saved.highScore) && saved.highScore >= 0 ? saved.highScore : 0;
-				game.started = true;
-				game.won = Boolean(saved.won);
-				game.winReached = Boolean(saved.winReached);
-				game.over = Boolean(saved.over) || !hasMoves(game.board);
-				game.announcement = 'Saved game restored.';
-			}
-		} catch {
-			// Invalid saved data is discarded by starting a new game below.
-		}
+	const saved = localStorage.getItem(STORAGE_KEY);
+	if (saved === null) {
+		newGame();
+		return;
 	}
 
-	if (!game.started) newGame();
+	try {
+		const data = JSON.parse(saved);
+		game.board = data.board;
+		game.score = data.score || 0;
+		game.highScore = data.highScore || 0;
+		game.won = data.won === true;
+		game.winReached = data.winReached === true;
+		// hasMoves throws an error if the saved board is broken.
+		game.over = !hasMoves(game.board);
+		game.announcement = 'Saved game restored.';
+	} catch {
+		newGame();
+	}
 }
 
 export function playMove(direction) {
-	if (!game.started) newGame();
-	if (game.over || !canMove(game.board, direction)) return;
+	if (game.over || !canMove(game.board, direction)) {
+		return;
+	}
 
-	const earned = pointsForMove(game.board, direction);
+	game.score += pointsForMove(game.board, direction);
 	game.board = spawn(move(game.board, direction));
-	game.score += earned;
-	game.highScore = Math.max(game.highScore, game.score);
 
-	const reachedTile = game.board.some((row) => row.some((tile) => tile >= 2048));
-	if (reachedTile && !game.winReached) {
+	if (game.score > game.highScore) {
+		game.highScore = game.score;
+	}
+
+	if (hasTile2048(game.board) && !game.winReached) {
 		game.won = true;
 		game.winReached = true;
 	}
+
 	game.over = !hasMoves(game.board);
-	game.announcement = `Score ${game.score}. Best score ${game.highScore}.${game.won ? ' You reached 2048! Keep playing or start a new game.' : ''}${game.over ? ' Game over. No moves remain.' : ''}`;
+
+	let message = 'Score ' + game.score + '. Best score ' + game.highScore + '.';
+	if (game.won) {
+		message += ' You reached 2048! Keep playing or start a new game.';
+	}
+	if (game.over) {
+		message += ' Game over. No moves remain.';
+	}
+	game.announcement = message;
+
 	saveGame();
 }
 
 export function keepPlaying() {
 	game.won = false;
-	game.announcement = `Continuing game. Score ${game.score}.`;
+	game.announcement = 'Continuing game. Score ' + game.score + '.';
 	saveGame();
 }

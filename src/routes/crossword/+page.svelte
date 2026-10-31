@@ -3,9 +3,7 @@
 	import CrosswordBoard from '#lib/components/CrosswordBoard.svelte';
 
 	let progress = $state({ filled: 0, complete: false });
-	let progressMessage = $derived(
-		progress.complete ? 'Puzzle complete. Nice work!' : `${progress.filled} of 23 squares filled.`
-	);
+	let progressMessage = $derived(getProgressMessage(progress));
 
 	const across = [
 		{ number: 1, text: 'H2O' },
@@ -21,6 +19,13 @@
 		{ number: 4, text: 'Time periods' },
 		{ number: 5, text: 'Doorbell sound' }
 	];
+
+	function getProgressMessage(currentProgress) {
+		if (currentProgress.complete) {
+			return 'Puzzle complete. Nice work!';
+		}
+		return currentProgress.filled + ' of 23 squares filled.';
+	}
 
 	function updateProgress(nextProgress) {
 		progress = nextProgress;
@@ -47,8 +52,16 @@
 </main>
 
 <style>
-	.game-intro { max-width: 46rem; }
-	.game-section { margin-top: var(--space-5); }
-	.game-section > * + * { margin-top: var(--space-4); }
-	.progress { color: var(--muted); }
+	.game-intro {
+		max-width: 46rem;
+	}
+
+	.game-section {
+		margin-top: var(--space-5);
+	}
+
+	.progress {
+		margin-top: var(--space-4);
+		color: var(--muted);
+	}
 </style>

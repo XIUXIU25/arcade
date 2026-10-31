@@ -30,19 +30,48 @@
 
 	function handleKeydown(event) {
 		const direction = keyDirections[event.key];
-		if (!direction) return;
-		event.preventDefault();
-		playMove(direction);
+		if (direction) {
+			event.preventDefault();
+			playMove(direction);
+		}
 	}
 
-	function moveTiles(direction) {
-		playMove(direction);
+	function moveUp() {
+		playMove('up');
 	}
 
-	function tileStyle(value) {
-		const background = tileColors[value] ?? '#172554';
-		const foreground = value <= 64 ? '#1f1f1f' : '#ffffff';
-		return `--tile-background: ${background}; --tile-foreground: ${foreground};`;
+	function moveDown() {
+		playMove('down');
+	}
+
+	function moveLeft() {
+		playMove('left');
+	}
+
+	function moveRight() {
+		playMove('right');
+	}
+
+	function tileBackground(value) {
+		// Tiles above 2048 reuse the darkest colour.
+		if (tileColors[value]) {
+			return tileColors[value];
+		}
+		return tileColors[2048];
+	}
+
+	function tileTextColor(value) {
+		if (value <= 64) {
+			return '#1f1f1f';
+		}
+		return '#ffffff';
+	}
+
+	function cellLabel(value) {
+		if (value === 0) {
+			return 'Empty';
+		}
+		return String(value);
 	}
 </script>
 
@@ -74,9 +103,15 @@
 				{#each game.board as row, rowIndex (rowIndex)}
 					<div class="board-row" role="row" aria-rowindex={rowIndex + 1}>
 						{#each row as tile, columnIndex (columnIndex)}
-							<div class="board-cell" role="gridcell" aria-colindex={columnIndex + 1} aria-label={tile ? String(tile) : 'Empty'}>
+							<div class="board-cell" role="gridcell" aria-colindex={columnIndex + 1} aria-label={cellLabel(tile)}>
 								{#if tile}
-									<div class="tile" style={tileStyle(tile)} transition:scale={{ duration: 140 }}>
+									<div
+										class="tile"
+										class:small-text={tile >= 1024}
+										style:background-color={tileBackground(tile)}
+										style:color={tileTextColor(tile)}
+										transition:scale={{ duration: 140 }}
+									>
 										{tile}
 									</div>
 								{/if}
@@ -90,11 +125,11 @@
 		<p class="keyboard-hint">Use the arrow keys to move the tiles.</p>
 
 		<div class="mobile-controls" role="group" aria-label="Move tiles">
-			<button type="button" aria-label="Move tiles up" onclick={() => moveTiles('up')}>↑</button>
+			<button type="button" aria-label="Move tiles up" onclick={moveUp}>↑</button>
 			<div class="horizontal-controls">
-				<button type="button" aria-label="Move tiles left" onclick={() => moveTiles('left')}>←</button>
-				<button type="button" aria-label="Move tiles down" onclick={() => moveTiles('down')}>↓</button>
-				<button type="button" aria-label="Move tiles right" onclick={() => moveTiles('right')}>→</button>
+				<button type="button" aria-label="Move tiles left" onclick={moveLeft}>←</button>
+				<button type="button" aria-label="Move tiles down" onclick={moveDown}>↓</button>
+				<button type="button" aria-label="Move tiles right" onclick={moveRight}>→</button>
 			</div>
 		</div>
 
@@ -116,36 +151,197 @@
 </main>
 
 <style>
-	.game-page { max-width: 34rem; margin: 0 auto; }
-	.game-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
-	.game-heading h1 { margin: 0; font-size: clamp(2.8rem, 11vw, 4.5rem); line-height: 1; }
-	.game-heading p { margin-bottom: 0; }
-	.new-game, .secondary-button { min-height: 44px; padding: 0.65rem 1rem; border: 0; border-radius: 0.6rem; background: var(--accent); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-	.new-game:hover, .secondary-button:hover { background: var(--accent-strong); }
-	.score-row { display: flex; gap: var(--space-3); margin: var(--space-5) 0 var(--space-3); }
-	.score-card { display: grid; min-width: 7rem; padding: 0.45rem 0.8rem; border-radius: 0.6rem; background: #d8e5d4; text-align: center; }
-	.score-card span { color: #3b463a; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; }
-	.score-card strong { font-size: 1.4rem; line-height: 1.3; }
-	.board-wrap { width: 100%; padding: 0.5rem; border-radius: 0.8rem; background: #879a83; box-shadow: var(--shadow); }
-	.board { display: grid; gap: 0.5rem; }
-	.board-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
-	.board-cell { display: grid; aspect-ratio: 1; min-width: 0; place-items: stretch; border-radius: 0.35rem; background: #d8e2d5; }
-	.tile { display: grid; place-items: center; border-radius: inherit; background: var(--tile-background); color: var(--tile-foreground); font-size: clamp(1.45rem, 8vw, 2.7rem); font-weight: 800; line-height: 1; }
-	.board-cell[aria-label='1024'] .tile, .board-cell[aria-label='2048'] .tile { font-size: clamp(1.05rem, 6vw, 2rem); }
-	.keyboard-hint { margin: var(--space-3) 0 0; color: var(--muted); text-align: center; }
-	.mobile-controls { display: none; margin-top: var(--space-3); text-align: center; }
-	.mobile-controls button { width: 3.5rem; height: 3.5rem; border: 1px solid #738470; border-radius: 0.7rem; background: #fff; color: var(--text); font-size: 1.5rem; cursor: pointer; }
-	.mobile-controls button:hover { background: #d8e5d4; }
-	.horizontal-controls { display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-2); }
-	.game-message { margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-	.game-message h2, .game-message p { margin-top: 0; }
-	.game-message p { margin-bottom: var(--space-3); }
-	.screen-reader-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+	.game-page {
+		max-width: 34rem;
+		margin: 0 auto;
+	}
+
+	.game-heading {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: var(--space-4);
+	}
+
+	.game-heading h1 {
+		margin: 0;
+		font-size: 4.5rem;
+		line-height: 1;
+	}
+
+	.game-heading p {
+		margin-bottom: 0;
+	}
+
+	.new-game,
+	.secondary-button {
+		min-height: 44px;
+		padding: 0.65rem 1rem;
+		border: 0;
+		border-radius: 0.6rem;
+		background: var(--accent);
+		color: #fff;
+		font: inherit;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.new-game:hover,
+	.secondary-button:hover {
+		background: var(--accent-strong);
+	}
+
+	.score-row {
+		display: flex;
+		gap: var(--space-3);
+		margin: var(--space-5) 0 var(--space-3);
+	}
+
+	.score-card {
+		display: flex;
+		flex-direction: column;
+		min-width: 7rem;
+		padding: 0.45rem 0.8rem;
+		border-radius: 0.6rem;
+		background: #d8e5d4;
+		text-align: center;
+	}
+
+	.score-card span {
+		color: #3b463a;
+		font-size: 0.9rem;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.score-card strong {
+		font-size: 1.4rem;
+		line-height: 1.3;
+	}
+
+	.board-wrap {
+		width: 100%;
+	}
+
+	.board {
+		background: #fff;
+	}
+
+	.board-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+
+	.board-cell {
+		display: flex;
+		aspect-ratio: 1;
+		min-width: 0;
+		border: 1px solid #8d8d8d;
+		background: #fff;
+	}
+
+	.tile {
+		display: flex;
+		flex: 1;
+		align-items: center;
+		justify-content: center;
+		font-size: 2.7rem;
+		font-weight: 800;
+		line-height: 1;
+	}
+
+	.tile.small-text {
+		font-size: 2rem;
+	}
+
+	.keyboard-hint {
+		margin: var(--space-3) 0 0;
+		color: var(--muted);
+		text-align: center;
+	}
+
+	.mobile-controls {
+		display: none;
+		margin-top: var(--space-3);
+		text-align: center;
+	}
+
+	.mobile-controls button {
+		width: 3.5rem;
+		height: 3.5rem;
+		border: 1px solid #738470;
+		border-radius: 0.7rem;
+		background: #fff;
+		color: var(--text);
+		font-size: 1.5rem;
+		cursor: pointer;
+	}
+
+	.mobile-controls button:hover {
+		background: #d8e5d4;
+	}
+
+	.horizontal-controls {
+		display: flex;
+		justify-content: center;
+		gap: var(--space-2);
+		margin-top: var(--space-2);
+	}
+
+	.game-message {
+		margin-top: var(--space-4);
+		padding: var(--space-4);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+	}
+
+	.game-message h2 {
+		margin-top: 0;
+	}
+
+	.game-message p {
+		margin-top: 0;
+		margin-bottom: var(--space-3);
+	}
+
+	/* Hidden on screen but still read by screen readers. */
+	.screen-reader-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+
 	@media (max-width: 42rem) {
-		.game-heading { align-items: flex-start; }
-		.game-heading > div { min-width: 0; }
-		.game-heading > div p:last-child { max-width: 34ch; }
-		.new-game { flex: 0 0 auto; }
-		.mobile-controls { display: block; }
+		.game-heading {
+			align-items: flex-start;
+		}
+
+		.game-heading h1 {
+			font-size: 3rem;
+		}
+
+		.game-heading > div {
+			min-width: 0;
+		}
+
+		.new-game {
+			flex-shrink: 0;
+		}
+
+		.tile {
+			font-size: 1.6rem;
+		}
+
+		.tile.small-text {
+			font-size: 1.1rem;
+		}
+
+		.mobile-controls {
+			display: block;
+		}
 	}
 </style>

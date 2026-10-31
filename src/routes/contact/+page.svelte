@@ -29,7 +29,16 @@
 </main>
 
 <style>
-	.contact-simple { margin-top: var(--space-5); }
-	.contact-list { margin: 0; padding-left: 1.2rem; }
-	.contact-list li + li { margin-top: var(--space-2); }
+	.contact-simple {
+		margin-top: var(--space-5);
+	}
+
+	.contact-list {
+		margin: 0;
+		padding-left: 1.2rem;
+	}
+
+	.contact-list li {
+		margin-bottom: var(--space-2);
+	}
 </style>

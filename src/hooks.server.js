@@ -7,7 +7,7 @@ export async function handle({ event, resolve }) {
 
 	const token = event.cookies.get(SESSION_COOKIE);
 	if (token) {
-		const result = await api('GET', '/api/auth/me', { token });
+		const result = await api('GET', '/api/auth/me', { token, timeout: 10000 });
 		if (result.ok) {
 			event.locals.user = result.data.user;
 			event.locals.token = token;

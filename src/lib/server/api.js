@@ -2,13 +2,14 @@ import { API_URL } from '$app/env/private';
 
 export const SESSION_COOKIE = 'session';
 
-const TIMEOUT_MS = 20000;
+// A sleeping Render free-tier API can take about a minute to wake up.
+const TIMEOUT_MS = 60000;
 
 /**
  * Call arcade-api from the SvelteKit server.
  * Never throws: network failures come back as { ok: false, status: 0 } so callers can show an error state.
  */
-export async function api(method, path, { token, body } = {}) {
+export async function api(method, path, { token, body, timeout = TIMEOUT_MS } = {}) {
 	const headers = { Accept: 'application/json' };
 	if (token) headers.Authorization = `Bearer ${token}`;
 	if (body !== undefined) headers['Content-Type'] = 'application/json';
@@ -18,11 +19,13 @@ export async function api(method, path, { token, body } = {}) {
 			method,
 			headers,
 			body: body === undefined ? undefined : JSON.stringify(body),
-			signal: AbortSignal.timeout(TIMEOUT_MS)
+			signal: AbortSignal.timeout(timeout)
 		});
 		const data = await response.json().catch(() => ({}));
 		return { ok: response.ok, status: response.status, data };
-	} catch {
+	} catch (error) {
+		// Shows up in the Render logs so the real cause (timeout, DNS, refused connection) is visible.
+		console.error(`API call failed: ${method} ${path} -> ${error?.cause?.code ?? error?.name}: ${error?.message}`);
 		return { ok: false, status: 0, data: { error: 'Could not reach the game server. Please try again.' } };
 	}
 }

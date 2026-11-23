@@ -1,10 +1,11 @@
 <script>
 	import { resolve } from '$app/paths';
-	let { currentPath = '/' } = $props();
+	let { currentPath = '/', user = null } = $props();
 	const links = [
 		{ path: '/', label: 'Home' },
 		{ path: '/2048', label: '2048' },
 		{ path: '/crossword', label: 'Crossword' },
+		{ path: '/games/battleship', label: 'Battleship' },
 		{ path: '/about', label: 'About' },
 		{ path: '/contact', label: 'Contact' }
 	];
@@ -30,6 +31,17 @@
 				</li>
 			{/each}
 		</ul>
+		<div class="account">
+			{#if user}
+				<span class="who">Signed in as <strong>{user.username}</strong></span>
+				<form method="POST" action={resolve('/logout')}>
+					<button type="submit">Log out</button>
+				</form>
+			{:else}
+				<a href={resolve('/login')} class:active={currentPage('/login')} aria-current={currentPage('/login')}>Log in</a>
+				<a href={resolve('/register')} class:active={currentPage('/register')} aria-current={currentPage('/register')}>Register</a>
+			{/if}
+		</div>
 	</nav>
 </header>
 
@@ -88,6 +100,42 @@
 	.site-links a:hover,
 	.site-links a.active {
 		color: var(--accent-strong);
+	}
+
+	.account {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.account form {
+		margin: 0;
+	}
+
+	.account a,
+	.account button {
+		display: inline-flex;
+		min-height: 44px;
+		align-items: center;
+		padding: 0.55rem 0.9rem;
+		border: 1px solid var(--accent);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--accent);
+		font: inherit;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.account a:hover,
+	.account button:hover {
+		background: var(--accent);
+		color: #fff;
+	}
+
+	.who {
+		color: var(--text);
 	}
 
 	@media (max-width: 42rem) {

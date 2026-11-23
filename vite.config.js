@@ -1,12 +1,12 @@
 import process from 'node:process';
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [
 		sveltekit({
-			adapter: adapter({ fallback: '404.html' }),
+			adapter: adapter(),
 			paths: {
 				base: process.argv.includes('dev') ? '' : (process.env.BASE_PATH ?? '')
 			},

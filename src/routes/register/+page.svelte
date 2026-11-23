@@ -7,15 +7,8 @@
 
 <svelte:head><title>Register | Arcade</title></svelte:head>
 
-<AuthForm
-	title="Create an account"
-	intro="Sign up to challenge other players at Battleship."
-	submitLabel="Create account"
-	pendingLabel="Creating account…"
-	showUsername
-	{form}
->
+<AuthForm title="Register" submitLabel="Register" {form}>
 	{#snippet footer()}
-		Already have an account? <a href={resolve('/login')}>Log in</a>.
+		Have an account? <a href={resolve('/login')}>Log in</a>
 	{/snippet}
 </AuthForm>
